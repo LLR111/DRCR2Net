@@ -26,12 +26,11 @@ class res(nn.Module):
         self.out_channels = out_planes
         self.branch1 = nn.Sequential(
                 BasicConv(in_planes, out_planes, kernel_size=3, stride=1, padding=1),
+                BasicConv(out_planes, out_planes, kernel_size=3, stride=1, padding=2, dilation=2)
                 )
         self.branch2 = nn.Sequential(
-                BasicConv(in_planes, out_planes, kernel_size=3, stride=1, padding=3, dilation=3),
-                )
-        self.branch3 = nn.Sequential(
-                BasicConv(in_planes, out_planes, kernel_size=3, stride=1, padding=5, dilation=5),
+                BasicConv(in_planes, out_planes, kernel_size=3, stride=1, padding=1),
+                BasicConv(out_planes, out_planes, kernel_size=3, stride=1, padding=2, dilation=2)
                 )
 
         self.ConvLinear = BasicConv(2*out_planes, 1, kernel_size=1, stride=1,relu=False,bn=False)
@@ -40,9 +39,8 @@ class res(nn.Module):
 
         x1 = self.branch1(x)
         x2 = self.branch2(x)
-        x3 = self.branch3(x)
 
-        out = torch.cat((x1, x2,x3), 1)
+        out = torch.cat((x1, x2), 1)
         out = self.ConvLinear(out)
 
         return out
